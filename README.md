@@ -1,28 +1,28 @@
-# Introdução
+# Introduction
 
-Desafio de criação de um processo de ETL em python, para construção de uma base de dados que consolida informações de cotações históricas do Bovespa.
+Challenge of creating an ETL process in Python to build a database that consolidates information on historical quotes from Bovespa.
 
-# Extração
+# Extraction
 
-O processo de ETL retorna dados do desempenho das ações negociadas na Bolsa de Valores Nacional (B3), disponível no link: https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/mercado-a-vista/series-historicas/ 
+The ETL process returns data on the performance of shares traded on the National Stock Exchange (B3), available at the link: https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/mercado-a-vista/series-historicas/
 
-A base de dados foi retirada da aba séries históricas da B3, no qual foram selecionados os anos de 2021, 2022 e 2023.
+The database was taken from the B3 historical series tab, in which the years 2021, 2022 and 2023 were selected.
 
-Por tratar-se de um arquivo posicional, o arquivo vem como string sem delimitador, portanto, foi necessário utilizar a opção *colspecs* da função *read_fwf* da biblioteca *pandas*, para especificar o número de caracteres de cada coluna.
+Since it is a positional file, the file comes as a string without a delimiter, therefore, it was necessary to use the *colspecs* option of the *read_fwf* function of the *pandas* library to specify the number of characters in each column.
 
-Como base para as etapas a serem seguidas, foi utilizado o conteúdo disponível no link: https://www.youtube.com/watch?v=gew9014pGaM
+As a basis for the steps to be followed, the content available at the link: https://www.youtube.com/watch?v=gew9014pGaM
 
-A fim de interpretar o arquivo, é disponibilizado no site da bovespa um layout do arquivo_cotações históricas, o qual está disponível juntamente com os arquivos do projeto.
+In order to interpret the file, a layout of the historical quotes file is available on the Bovespa website, which is available together with the project files.
 
-Em um primeito momento, cabe salientar que os arquivos utilizados no código base diferem dos arquivos importados no Github, uma vez que os originais excedem o tamanho permitido por essa plataforma (25MB). Assim, visando exemplificar, foi importado um arquivo *.txt*, chamado *exemplo_base_dados.TXT*.
+First of all, it is worth noting that the files used in the base code differ from the files imported into Github, since the originals exceed the size allowed by this platform (25MB). Therefore, in order to exemplify, a *.txt* file was imported, called *example_database.TXT*.
 
-# Transformação
+# Transformation
 
-A primeira etapa a ser feita é importar as bibliotecas que serão utilizadas no decorrer do projeto. Nesse caso, somente foi preciso importar a biblioteca pandas.
+The first step to be taken is to import the libraries that will be used throughout the project. In this case, it was only necessary to import the pandas library.
 
-Posteriormente, foram criadas uma string com o caminho em que os arquivos estão localizados na máquina, uma lista com as colunas de posições de cada campo e uma lista com os nomes de cada campo, todos utilizadas como argumentos da função *read_fwf*.
+Subsequently, a string was created with the path where the files are located on the machine, a list with the columns of positions of each field and a list with the names of each field, all used as arguments of the *read_fwf* function.
 
-**IMPORTANTE** salientar que, por não querer que a primeira linha do layout fosse lida, foi utilizado o argumento *skiprows =1*.
+**IMPORTANT** to note that, since we did not want the first line of the layout to be read, the argument *skiprows =1* was used.
 
 ```
 def read_files(path, name_file, year_date, type_file):
@@ -49,7 +49,7 @@ def read_files(path, name_file, year_date, type_file):
     return df
 ```
 
-O step seguinte traz uma função que realiza o filtro no código BDI das ações listadas. Nesse caso, foi selecionado somente o código de número 2, correspondente a "Lote Padrão".
+The next step brings a function that filters the BDI code of the listed shares. In this case, only code number 2 was selected, corresponding to "Standard Lot".
 
 ```
 def filter_stocks(df):
@@ -59,7 +59,7 @@ def filter_stocks(df):
     return df
 ```
 
-Visando ajustar o campo de data, foi utilizada a seguinte função:
+In order to adjust the date field, the following function was used:
 
 ```
 def parse_date(df):
@@ -67,7 +67,7 @@ def parse_date(df):
     return df 
 ```
 
-Para finalizar o processo de transformação, foram ajustados os campos numéricos e dividido por cem, para que retornassem duas casas decimais após a vírgula e feita uma transformação para ser convertido no tipo float.
+To complete the transformation process, the numeric fields were adjusted and divided by one hundred, so that they returned two decimal places after the comma and a transformation was made to be converted to the float type.
 
 ```
 def parse_values(df):
@@ -79,7 +79,7 @@ def parse_values(df):
     return df 
 ```
 
-Visando possível automatização e buscando boas práticas de engenharia de dados, todas as etapas do processo foram criadas no formato de funções. Por fim, é utilizada a função *save_files*, que chama todas as anteriores e pode ser utilizada dentro de um *loop for* para executar o processo multiplas vezes, apenas alterando o ano do arquivo e salvando todos os outputs em uma pasta do sistema operacional, no formato *.csv*.
+Aiming at possible automation and seeking good data engineering practices, all the steps of the process were created in the form of functions. Finally, the *save_files* function is used, which calls all the previous ones and can be used within a *for* loop to execute the process multiple times, just changing the year of the file and saving all the outputs in a folder of the operating system, in the *.csv* format.
 
 ```
 def save_files(path, name_file, year_date, type_file):
